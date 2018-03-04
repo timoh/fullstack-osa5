@@ -2,7 +2,7 @@ import React from 'react'
 
 const Login = ({
   login,
-  handleFieldChange,
+  handleLoginFieldChange,
   password,
   username
 }) => (
@@ -11,12 +11,12 @@ const Login = ({
   <form onSubmit={login}>
     <div>
       <label>username:</label>
-      <input type="text" name="username" value={username} onChange={handleFieldChange} />
+      <input type="text" name="username" value={username} onChange={handleLoginFieldChange} />
     </div>
 
     <div>
       <label>password:</label>
-      <input type="password" name="password" value={password} onChange={handleFieldChange} />
+      <input type="password" name="password" value={password} onChange={handleLoginFieldChange} />
     </div>
 
     <div>

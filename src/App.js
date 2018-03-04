@@ -1,6 +1,7 @@
 import React from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
+import NewBlog from './components/NewBlog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,7 +12,10 @@ class App extends React.Component {
       blogs: [],
       user: null,
       username: '',
-      password: ''
+      password: '',
+      title: '',
+      author: '',
+      url: ''
     }
   }
 
@@ -43,6 +47,33 @@ class App extends React.Component {
     )
   } 
 
+  submitNewBlog = (event) => {
+
+    console.log("Submitting new blog!")
+
+    const title = this.state.title
+    const author = this.state.author
+    const url = this.state.url
+    const token = this.state.user.token
+
+    const payload = {
+      title, author, url, token
+    }
+
+    blogService.create(payload).then(() =>
+      {
+        return blogService.getAll()
+      }
+    ).then(blogs => {
+        console.log("Submit successful!")
+        this.setState({ blogs })
+        return blogs
+      }
+    ).catch(error => {
+      console.log("Error: ", error.message)
+    })
+  }
+
   login = (event) => {
     event.preventDefault()
     loginService.login(this.state.username, this.state.password).then(loginResponse => {
@@ -65,7 +96,26 @@ class App extends React.Component {
     await console.log(this.state.user)
   }
 
-  handleFieldChange = (event) => {
+  handleNewBlogFieldChange = (event) => {
+    const newVal = event.target.value
+
+    if (event.target.name === 'title') {
+      this.setState({ title: newVal })
+      // console.log("Changed title to: ", newVal )
+    }
+
+    if (event.target.name === 'author') {
+      this.setState({ author: newVal })
+      // console.log("Changed author to: ", newVal )
+    }
+
+    if (event.target.name === 'url') {
+      this.setState({ url: newVal })
+      // console.log("Changed url to: ", newVal )
+    }
+  }
+
+  handleLoginFieldChange = (event) => {
     const newVal = event.target.value
 
     if (event.target.name === 'username') {
@@ -84,13 +134,16 @@ class App extends React.Component {
     if (this.state.user === null) {
       return (
         <div>
-            <Login login={this.login} handleFieldChange={this.handleFieldChange} password={this.state.password} username={this.state.username}/>
+            <Login login={this.login} handleLoginFieldChange={this.handleLoginFieldChange} password={this.state.password} username={this.state.username}/>
         </div>
       )
     } else {
       return (
         <div>
           <p>{this.state.user.name} logged in <button onClick={this.logout}>logout</button></p>
+
+          <NewBlog submitNewBlog={this.submitNewBlog} handleNewBlogFieldChange={this.handleNewBlogFieldChange} title={this.state.title} author={this.state.author} url={this.state.url} />
+          
           <h2>blogs</h2>
           {this.state.blogs.map(blog => 
             <Blog key={blog.id} blog={blog}/>
