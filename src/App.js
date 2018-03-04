@@ -15,7 +15,29 @@ class App extends React.Component {
     }
   }
 
+  getUserLSState() {
+    const lsUser = window.localStorage.getItem('user')
+
+    if (lsUser !== undefined && lsUser !== null) {
+      const user = JSON.parse(lsUser)
+
+      // console.log("User:", user)
+
+      const username = user.username
+      const name = user.name
+
+      // console.log("Setting user state from LS: ", user, username, name)
+
+      this.setState({
+        user, username, name
+      })
+    }
+    
+  }
+
   componentDidMount() {
+    this.getUserLSState()
+
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
     )
@@ -25,9 +47,16 @@ class App extends React.Component {
     event.preventDefault()
     loginService.login(this.state.username, this.state.password).then(loginResponse => {
       this.setState({ user: loginResponse })
-      console.log("User token: ", loginResponse.token)
+      // console.log("User token: ", loginResponse.token)
+      return loginResponse
+    }).then(response => {
+      const stringifiedUser = JSON.stringify(response)
+      window.localStorage.setItem('user', stringifiedUser)
+      console.log("Stored user to LS: ", stringifiedUser)
+    }).catch(error => {
+      console.log("Login failed with the following error: ", error.message)
     })
-    this.setState({ username: '', password: '' })
+    
   }
 
   logout = async () => {
