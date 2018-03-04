@@ -23,12 +23,12 @@ class App extends React.Component {
 
   showLoginForm = () => {
     const newState = true
-    this.setState({ showLogin: newState })    
+    this.setState({ showLogin: newState })
   }
-  
+
   hideLoginForm = () => {
     const newState = false
-    this.setState({ showLogin: newState }) 
+    this.setState({ showLogin: newState })
   }
 
   getUserLSState = () => {
@@ -52,7 +52,7 @@ class App extends React.Component {
       }
 
     }
-    
+
   }
 
   componentDidMount() {
@@ -63,7 +63,7 @@ class App extends React.Component {
     ).catch(error => {
       console.log(error)
     })
-  } 
+  }
 
   submitNewBlog = (event) => {
 
@@ -80,20 +80,19 @@ class App extends React.Component {
       title, author, url, token
     }
 
-    blogService.create(payload).then(() =>
-      {
-        return blogService.getAll()
-      }
+    blogService.create(payload).then(() => {
+      return blogService.getAll()
+    }
     ).then(blogs => {
-        console.log("Submit successful!")
-        this.setState({ blogs })
-        this.setState({
-          title: '',
-          author: '',
-          url: ''
-        })
-        return blogs
-      }
+      console.log("Submit successful!")
+      this.setState({ blogs })
+      this.setState({
+        title: '',
+        author: '',
+        url: ''
+      })
+      return blogs
+    }
     ).catch(error => {
       console.log("Error: ", error.message)
     })
@@ -112,7 +111,7 @@ class App extends React.Component {
     }).catch(error => {
       console.log("Login failed with the following error: ", error.message)
     })
-    
+
   }
 
   logout = async () => {
@@ -154,36 +153,34 @@ class App extends React.Component {
       this.setState({ password: newVal })
       // console.log("Changed password to: ", newVal )
     }
-    
-  } 
+
+  }
 
   render() {
-      return (
+    return (
+      <div>
+        {!this.state.user &&
+          <Login login={this.login} handleLoginFieldChange={this.handleLoginFieldChange} password={this.state.password} username={this.state.username} beginLoginButtonStyle={this.beginLoginButtonStyle} cancelLoginButtonStyle={this.beginLoginButtonStyle} showLoginForm={this.showLoginForm} hideLoginForm={this.hideLoginForm} showLogin={this.state.showLogin} />
+        }
+
         <div>
-            { !this.state.user && 
-              <Login login={this.login} handleLoginFieldChange={this.handleLoginFieldChange} password={this.state.password} username={this.state.username} beginLoginButtonStyle={this.beginLoginButtonStyle} cancelLoginButtonStyle={this.beginLoginButtonStyle} showLoginForm={this.showLoginForm} hideLoginForm={this.hideLoginForm} showLogin={this.state.showLogin} />
-            }
+          {this.state.user &&
+            <LoggedInUser user={this.state.user} logout={this.logout} />
+          }
 
+          {this.state.user &&
+            <NewBlog submitNewBlog={this.submitNewBlog} handleNewBlogFieldChange={this.handleNewBlogFieldChange} title={this.state.title} author={this.state.author} url={this.state.url} />
+          }
 
-            <div>
-              { this.state.user && 
-                <LoggedInUser user={this.state.user} logout={this.logout} />
-              }
+          {this.state.user &&
+            <Blogs blogs={this.state.blogs} />
+          }
 
-              { this.state.user && 
-               <NewBlog submitNewBlog={this.submitNewBlog} handleNewBlogFieldChange={this.handleNewBlogFieldChange} title={this.state.title} author={this.state.author} url={this.state.url} />
-              }
-              
-              
-              <h2>blogs</h2>
-              {this.state.blogs.map(blog => 
-                <Blog key={blog.id} blog={blog}/>
-              )}
-          </div>
         </div>
+      </div>
 
-      )
-    }
+    )
+  }
 
 }
 
