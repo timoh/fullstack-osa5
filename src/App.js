@@ -60,10 +60,14 @@ class App extends React.Component {
 
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
-    )
+    ).catch(error => {
+      console.log(error)
+    })
   } 
 
   submitNewBlog = (event) => {
+
+    event.preventDefault()
 
     console.log("Submitting new blog!")
 
@@ -83,6 +87,11 @@ class App extends React.Component {
     ).then(blogs => {
         console.log("Submit successful!")
         this.setState({ blogs })
+        this.setState({
+          title: '',
+          author: '',
+          url: ''
+        })
         return blogs
       }
     ).catch(error => {

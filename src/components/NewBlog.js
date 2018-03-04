@@ -1,5 +1,7 @@
 import React from 'react'
 
+import PropTypes from 'prop-types'
+
 const NewBlog = ({
   submitNewBlog,
   handleNewBlogFieldChange,
@@ -31,5 +33,11 @@ const NewBlog = ({
   </form>
 </div>
 )
+
+NewBlog.propTypes = {
+  title: PropTypes.string.isRequired,
+  author: PropTypes.string.isRequired,
+  url: PropTypes.string
+};
 
 export default NewBlog
